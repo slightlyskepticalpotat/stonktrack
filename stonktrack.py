@@ -7,7 +7,7 @@ import yaml
 
 def fetch():
     display = [
-        ("bold text", "Name (Prices in USD)             Market          Postmarket      Volume          \n")]
+        ("bold text", "Name (Prices in USD)          Market          Postmarket      Volume         \n")]
     quotes = []
     stocks = ",".join(config['stocks'])
     cryptos = ",".join([crypto + "-USD" for crypto in config['cryptos']])
@@ -17,12 +17,12 @@ def fetch():
     data = requests.get(
         f"https://query1.finance.yahoo.com/v7/finance/quote?fields=symbol,quoteType,regularMarketPrice,postMarketPrice,regularMarketVolume,shortName,regularMarketChangePercent,postMarketChangePercent,marketState&symbols={query}").json()
 
-    try:
-        for quote in data["quoteResponse"]["result"]:
+    for quote in data["quoteResponse"]["result"]:
+        try:
             quotes.append([fix_string(quote["symbol"] + ": " + quote["quoteType"], 29), fix_string(quote["regularMarketPrice"], 15), fix_string(quote.get("postMarketPrice", "0.00"), 15), fix_string(quote.get("regularMarketVolume", 0), 15) +
                            "\n", fix_string(quote["shortName"], 29), fix_string(str(quote["regularMarketChangePercent"]) + "%", 15), fix_string(str(quote.get("postMarketChangePercent", "0.00")) + "%", 15), fix_string(quote["marketState"], 15) + "\n"])
-    except:  # Ensure that one API error doesn't break everything
-        pass
+        except:
+            pass
 
     if config["sort"] == "alpha":
         quotes.sort(key=lambda x: x[4], reverse=config["reverse"])

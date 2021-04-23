@@ -6,7 +6,7 @@ import yaml
 
 
 def fetch():
-    display = "Name (Prices USD)              Market          Postmarket      Volume          \n"
+    header = "Name (Prices USD)              Market          Postmarket      Volume          \n"
     quotes = []
     stocks = ",".join(config['stocks'])
     cryptos = ",".join([crypto + "-USD" for crypto in config['cryptos']])
@@ -14,11 +14,14 @@ def fetch():
     others = ",".join(config['others'])
     query = ",".join([stocks, cryptos, forexes, others]).strip(",")
     data = requests.get(
-        f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={query}").json()
+        f"https://query1.finance.yahoo.com/v7/finance/quote?fields=symbol,quoteType,regularMarketPrice,postMarketPrice,regularMarketVolume,shortName,regularMarketChangePercent,postMarketChangePercent,marketState&symbols={query}").json()
 
     for quote in data["quoteResponse"]["result"]:
-        quotes.append([fix_string(quote["symbol"] + ": " + quote["quoteType"], 30), fix_string(quote["regularMarketPrice"], 15), fix_string(quote.get("postMarketPrice", "0.00"), 15), fix_string(quote.get("regularMarketVolume", 0), 15) +
-                       "\n", fix_string(quote["shortName"], 30), fix_string(str(quote["regularMarketChangePercent"]) + "%", 15), fix_string(str(quote.get("postMarketChangePercent", "0.00")) + "%", 15), fix_string(quote["marketState"], 15)])
+        try:
+            quotes.append([fix_string(quote["symbol"] + ": " + quote["quoteType"], 30), fix_string(quote["regularMarketPrice"], 15), fix_string(quote.get("postMarketPrice", "0.00"), 15), fix_string(quote.get("regularMarketVolume", 0), 15) +
+                           "\n", fix_string(quote["shortName"], 30), fix_string(str(quote["regularMarketChangePercent"]) + "%", 15), fix_string(str(quote.get("postMarketChangePercent", "0.00")) + "%", 15), fix_string(quote["marketState"], 15)])
+        except:
+            pass
 
     if config["sort"] == "alpha":
         quotes.sort(key=lambda x: x[4], reverse=config["reverse"])
@@ -32,22 +35,14 @@ def fetch():
     elif config["sort"] == "value":
         quotes.sort(key=lambda x: x[1], reverse=config["reverse"])
 
-    display += "\n".join("".join(quote) for quote in quotes)
-    return display
+    return "\n".join("".join(quote) for quote in quotes)
 
 
 def fix_string(string, length):
-    if type(string) != str:
-        string = str(string)
-    if len(string) > length:
-        string = string[:length]
-    else:
-        string += " " * (length - len(string))
+    string = str(string)
+    string = string[:min(length, len(string) + 1)]
+    string += " " * (length - len(string))
     return string + " "
-
-
-def formatted_time():
-    return time.strftime("%H:%M:%S", time.localtime())
 
 
 def keystroke(key):
@@ -55,19 +50,36 @@ def keystroke(key):
         scroll_up(loop)
     elif key == "down" or key == "page down":
         scroll_down(loop)
-    elif key == "r" or key == "R":
+    elif key == "C" or key == "c":
+        load_config()
+    elif key == "R" or key == "r":
         refresh(loop, None)
-    elif key == "q" or key == "Q":
+    elif key == "Q" or key == "q":
         raise urwid.ExitMainLoop()
+
+
+def load_config():
+    with open("config.yml", "r") as conf:
+        global config
+        config = yaml.full_load(conf)
+        if not config["stocks"]:
+            config["stocks"] = []
+        if not config["cryptos"]:
+            config["cryptos"] = []
+        if not config["forexes"]:
+            config["forexes"] = []
+        if not config["others"]:
+            config["others"] = []
 
 
 def refresh(_loop, _data):
     global last_query, last_query_size, last_update
     last_query = fetch()
     last_query_size = len(last_query)
-    last_update = formatted_time()
-    body.base_widget.set_text(last_query[scroll_location:])
-    footer.base_widget.set_text([("key", "↑/PgUp"), ("text", " Up  "), ("key", "↓/PgDn"), ("text", " Down  "), ("key", "R"), ("text", " Refresh  "),
+    last_update = time.strftime("%H:%M:%S", time.localtime())
+    body.base_widget.set_text(
+        [("bold text", "Name (Prices USD)              Market          Postmarket      Volume          \n"), ("text", last_query[scroll_location:])])
+    footer.base_widget.set_text([("key", "↑/↓ "), ("text", " Scroll  "), ("key", "C"), ("text", " Config  "), ("key", "R"), ("text", " Refresh  "),
                                  ("key", "Q"), ("text", " Quit  "), ("key", f"{scroll_location}/{last_query_size}"), ("text", " Chars  "), ("key", last_update), ("text", " Updated")])
     _loop.set_alarm_in(config["refresh"], refresh)
     _loop.draw_screen()
@@ -76,8 +88,9 @@ def refresh(_loop, _data):
 def scroll_up(_loop):
     global scroll_location
     scroll_location = max(scroll_location - 80, 0)  # 80 chars
-    body.base_widget.set_text(last_query[scroll_location:])
-    footer.base_widget.set_text([("key", "↑/PgUp"), ("text", " Up  "), ("key", "↓/PgDn"), ("text", " Down  "), ("key", "R"), ("text", " Refresh  "),
+    body.base_widget.set_text(
+        [("bold text", "Name (Prices USD)              Market          Postmarket      Volume          \n"), ("text", last_query[scroll_location:])])
+    footer.base_widget.set_text([("key", "↑/↓ "), ("text", " Scroll  "), ("key", "C"), ("text", " Config  "), ("key", "R"), ("text", " Refresh  "),
                                  ("key", "Q"), ("text", " Quit  "), ("key", f"{scroll_location}/{last_query_size}"), ("text", " Chars  "), ("key", last_update), ("text", " Updated")])
     _loop.draw_screen()
 
@@ -85,22 +98,14 @@ def scroll_up(_loop):
 def scroll_down(_loop):
     global scroll_location
     scroll_location = min(scroll_location + 80, last_query_size)  # 80 chars
-    body.base_widget.set_text(last_query[scroll_location:])
-    footer.base_widget.set_text([("key", "↑/PgUp"), ("text", " Up  "), ("key", "↓/PgDn"), ("text", " Down  "), ("key", "R"), ("text", " Refresh  "),
+    body.base_widget.set_text(
+        [("bold text", "Name (Prices USD)              Market          Postmarket      Volume          \n"), ("text", last_query[scroll_location:])])
+    footer.base_widget.set_text([("key", "↑/↓ "), ("text", " Scroll  "), ("key", "C"), ("text", " Config  "), ("key", "R"), ("text", " Refresh  "),
                                  ("key", "Q"), ("text", " Quit  "), ("key", f"{scroll_location}/{last_query_size}"), ("text", " Chars  "), ("key", last_update), ("text", " Updated")])
     _loop.draw_screen()
 
 
-with open("config.yml", "r") as conf:
-    config = yaml.full_load(conf)
-    if not config["stocks"]:
-        config["stocks"] = []
-    if not config["cryptos"]:
-        config["cryptos"] = []
-    if not config["forexes"]:
-        config["forexes"] = []
-    if not config["others"]:
-        config["others"] = []
+load_config()
 
 if config["theme"] == "light":
     palette = [("positive", "light green", "white"), ("negative", "light red", "white"), ("text", "black", "white"),
@@ -118,7 +123,7 @@ header = f"stonktrack: {len(config['stocks'])} {'stocks' if len(config['stocks']
 header = urwid.Text([("title", header)])
 body = urwid.Filler(urwid.Text([("text", "Loading prices...")]), valign="top")
 body = urwid.LineBox(urwid.Padding(body, align="left"))
-footer = urwid.Text([("key", "↑/PgUp"), ("text", " Up  "), ("key", "↓/PgDn"), ("text", " Down  "), ("key", "R"), ("text", " Refresh  "),
+footer = urwid.Text([("key", "↑/↓ "), ("text", " Scroll  "), ("key", "C"), ("text", " Config  "), ("key", "R"), ("text", " Refresh  "),
                      ("key", "Q"), ("text", " Quit  "), ("key", "0/0"), ("text", " Chars  "), ("key", "Never"), ("text", " Updated")])
 
 layout = urwid.Frame(header=header, body=body,
