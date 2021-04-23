@@ -5,6 +5,10 @@
 
 Stonktrack is a terminal utility that can track stocks, cryptocurrencies, forexes, and more. Built with Python and urwid, it's different from other terminal finance trackers in that it can track a variety of assets, fetches  non-delayed real-time data, and does not require an API key.
 
+![stonktrack screenshot](https://i.imgur.com/H4eb6JO.png)
+
+![stonktrack-scroll screenshot](https://i.imgur.com/478Rp3k.png)
+
 ## Getting Started
 
 ### Installing and Running

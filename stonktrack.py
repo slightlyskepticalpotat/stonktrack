@@ -42,7 +42,7 @@ def fetch():
                 display.append(("negative", value))
             elif "%" in value and value != "0.00%":
                 display.append(("positive", value))
-            elif "PRE" in value:  # also covers PREPRE
+            elif "PRE" in value or "CLOSED" in value:  # also covers PREPRE
                 display.append(("negative", value))
             elif "REGULAR" in value:
                 display.append(("positive", value))
