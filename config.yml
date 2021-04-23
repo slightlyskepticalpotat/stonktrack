@@ -1,14 +1,20 @@
-# This is an example configuration file, feel free to modify it.
+# This is an example configuration file. See the documentation for details.
 
 refresh: 10
 theme: default
 sort: change
+reverse: true
 stocks:
-    - AAPL
-    - MSFT
-    - AMZN
+    - MSFT # stock
+    - VTV # etf
+    - ^DJI # index
 cryptos:
-    - BTC
-    - ETH
+    - BTC # crypto
+    - ETH # crypto
 forexes:
-    - CAD
+    - CAD # forex
+    - GBP # forex
+others:
+    - ^TNX # bond
+    - GC=F # future
+    - RY.TO # tsx
