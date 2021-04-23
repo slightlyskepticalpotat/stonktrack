@@ -10,7 +10,7 @@ def fetch():
     quotes = []
     stocks = ",".join(config['stocks'])
     cryptos = ",".join([crypto + "-USD" for crypto in config['cryptos']])
-    forexes = ",".join([forex + "USD=X" for forex in config['forexes']])
+    forexes = ",".join([forex + "=X" for forex in config['forexes']])
     others = ",".join(config['others'])
     query = ",".join([stocks, cryptos, forexes, others]).strip(",")
     data = requests.get(

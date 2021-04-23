@@ -1,8 +1,5 @@
 # Configuration
-
-You will need to create a configuration file named `config.yml` in the same directory as the program.
-
-Alternatively, you can also modify the [example configuration file](config.yml) included.
+To use this program, you will need to create a configuration file named `config.yml` in the same directory as the program. Alternatively, you can also modify the [example configuration file](config.yml) included.
 
 ## API Key
 
