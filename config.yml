@@ -1,5 +1,3 @@
-# This is an example configuration file. See the documentation for details.
-
 refresh: 10
 theme: default
 sort: change
@@ -12,8 +10,8 @@ cryptos:
     - BTC # crypto
     - ETH # crypto
 forexes:
-    - CAD # forex
-    - GBP # forex
+    - CADUSD # forex
+    - USDGBP # forex
 others:
     - ^TNX # bond
     - GC=F # future
