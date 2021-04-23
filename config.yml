@@ -1,0 +1,14 @@
+# This is an example configuration file, feel free to modify it.
+
+refresh: 10
+theme: default
+sort: change
+stocks:
+    - AAPL
+    - MSFT
+    - AMZN
+cryptos:
+    - BTC
+    - ETH
+forexes:
+    - CAD
