@@ -13,13 +13,13 @@ def fetch():
     forexes = ",".join([forex + "=X" for forex in config['forexes']])
     others = ",".join(config['others'])
     query = ",".join([stocks, cryptos, forexes, others]).strip(",")
-    data = requests.get(
+    data = session.get(
         f"https://query1.finance.yahoo.com/v7/finance/quote?fields=symbol,quoteType,regularMarketPrice,postMarketPrice,regularMarketVolume,shortName,regularMarketChangePercent,postMarketChangePercent,marketState&symbols={query}").json()
 
     if config['prices'] == "USD":
         rate = 1
     else:
-        rate_data = requests.get(
+        rate_data = session.get(
             f"https://query1.finance.yahoo.com/v7/finance/quote?fields=regularMarketPrice&symbols=USD{config['prices']}=X").json()
         if not rate_data["quoteResponse"]["result"][0]:
             raise Exception(
@@ -144,6 +144,7 @@ scroll_location = 0
 last_query_size = 0
 last_update = ""
 last_query = ""
+session = requests.Session()
 
 if __name__ == "__main__":
     loop.set_alarm_in(0, refresh)
