@@ -1,7 +1,9 @@
+# Sample configuration file, see CONFIG.md for explanation.
 refresh: 10
 theme: default
 sort: change
 reverse: true
+prices: CAD
 stocks:
     - MSFT # stock
     - VTV # etf

@@ -3,7 +3,7 @@
 ![GitHub](https://img.shields.io/github/license/slightlyskepticalpotat/stonktrack?style=flat-square)
 ![Python Version](https://img.shields.io/badge/python-%3E%3D%203.8-blue?style=flat-square)
 
-Stonktrack is a terminal utility that can track stocks, cryptocurrencies, forexes, and more. Built with Python and urwid, it's different from other terminal finance trackers in that it can track a variety of assets, fetches  non-delayed real-time data, and does not require an API key.
+Stonktrack is a terminal utility that can track stocks, cryptocurrencies, forexes, and more. Built with Python and urwid, it's different from other terminal finance trackers in that it can track a variety of assets, fetches  non-delayed real-time data, and does not require an API key. Stocktrack can also automatically convert prices into your local currency.
 
 ![stonktrack screenshot](https://i.imgur.com/H4eb6JO.png)
 

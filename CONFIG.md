@@ -9,13 +9,15 @@ This program uses the Yahoo Finance API, which is publicly available and does no
 
 ### Required
 
-refresh - Refresh interval in seconds. Can be any positive integer. Values from 10 to 60 seconds are recommended.
+refresh - Refresh interval in seconds (set to 0 for maximum performance). Can be any positive integer. Values from 10 to 60 are recommended.
 
 theme - Colour theme of the program. Can be light, dark, or default. Default is recommended.
 
 sort - Key to sort listings by. Can be alpha (alphabetical by name), change (total change in the past 24 hours), symbol (alphabetical by symbol), trading (if the market is open), and value (USD value). Change is recommended.
 
 reverse - Whether to reverse the default ascending sort order. True is recommended for most sorting keys.
+
+prices - Currency that the prices are displayed in. Most of the ISO 4217 codes should work, but anything other than USD will be converted at market rates.
 
 ### Optional
 
