@@ -6,7 +6,7 @@ import yaml
 
 
 def fetch():
-    header = "Name (Prices USD)              Market          Postmarket      Volume          \n"
+    header = f"{fix_string('Name (Prices ' + config['prices'] + ')', 30)}Market          Postmarket      Volume         \n"
     quotes = []
     stocks = ",".join(config['stocks'])
     cryptos = ",".join([crypto + "-USD" for crypto in config['cryptos']])
@@ -88,7 +88,7 @@ def refresh(_loop, _data):
     last_query_size = len(last_query)
     last_update = time.strftime("%H:%M:%S", time.localtime())
     body.base_widget.set_text(
-        [("bold text", "Name (Prices USD)              Market          Postmarket      Volume          \n"), ("text", last_query[scroll_location:])])
+        [("bold text", f"{fix_string('Name (Prices ' + config['prices'] + ')', 30)}Market          Postmarket      Volume         \n"), ("text", last_query[scroll_location:])])
     footer.base_widget.set_text([("key", "↑/↓ "), ("text", " Scroll  "), ("key", "C"), ("text", " Config  "), ("key", "R"), ("text", " Refresh  "),
                                  ("key", "Q"), ("text", " Quit  "), ("key", f"{scroll_location}/{last_query_size}"), ("text", " Chars  "), ("key", last_update), ("text", " Updated")])
     _loop.set_alarm_in(config["refresh"], refresh)
@@ -99,7 +99,7 @@ def scroll_up(_loop):
     global scroll_location
     scroll_location = max(scroll_location - 80, 0)  # 80 chars
     body.base_widget.set_text(
-        [("bold text", "Name (Prices USD)              Market          Postmarket      Volume          \n"), ("text", last_query[scroll_location:])])
+        [("bold text", f"{fix_string('Name (Prices ' + config['prices'] + ')', 30)}Market          Postmarket      Volume         \n"), ("text", last_query[scroll_location:])])
     footer.base_widget.set_text([("key", "↑/↓ "), ("text", " Scroll  "), ("key", "C"), ("text", " Config  "), ("key", "R"), ("text", " Refresh  "),
                                  ("key", "Q"), ("text", " Quit  "), ("key", f"{scroll_location}/{last_query_size}"), ("text", " Chars  "), ("key", last_update), ("text", " Updated")])
     _loop.draw_screen()
@@ -109,7 +109,7 @@ def scroll_down(_loop):
     global scroll_location
     scroll_location = min(scroll_location + 80, last_query_size)  # 80 chars
     body.base_widget.set_text(
-        [("bold text", "Name (Prices USD)              Market          Postmarket      Volume          \n"), ("text", last_query[scroll_location:])])
+        [("bold text", f"{fix_string('Name (Prices ' + config['prices'] + ')', 30)}Market          Postmarket      Volume         \n"), ("text", last_query[scroll_location:])])
     footer.base_widget.set_text([("key", "↑/↓ "), ("text", " Scroll  "), ("key", "C"), ("text", " Config  "), ("key", "R"), ("text", " Refresh  "),
                                  ("key", "Q"), ("text", " Quit  "), ("key", f"{scroll_location}/{last_query_size}"), ("text", " Chars  "), ("key", last_update), ("text", " Updated")])
     _loop.draw_screen()

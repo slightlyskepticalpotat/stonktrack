@@ -7,7 +7,7 @@ import yaml
 
 def fetch():
     display = [
-        ("bold text", "Name (Prices in USD)          Market          Postmarket      Volume         \n")]
+        ("bold text", f"{fix_string('Name (Prices ' + config['prices'] + ')', 29)}Market          Postmarket      Volume         \n")]
     quotes = []
     stocks = ",".join(config['stocks'])
     cryptos = ",".join([crypto + "-USD" for crypto in config['cryptos']])
