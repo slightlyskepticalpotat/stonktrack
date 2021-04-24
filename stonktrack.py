@@ -15,11 +15,19 @@ def fetch():
     others = ",".join(config['others'])
     query = ",".join([stocks, cryptos, forexes, others]).strip(",")
     data = requests.get(
-        f"https://query1.finance.yahoo.com/v7/finance/quote?fields=symbol,quoteType,regularMarketPrice,postMarketPrice,regularMarketVolume,shortName,regularMarketChangePercent,postMarketChangePercent,marketState&symbols={query}").json()
+            f"https://query1.finance.yahoo.com/v7/finance/quote?fields=symbol,quoteType,regularMarketPrice,postMarketPrice,regularMarketVolume,shortName,regularMarketChangePercent,postMarketChangePercent,marketState&symbols={query}").json()
+
+    if config['prices'] == "USD":
+        rate = 1
+    else:
+        rate_data = requests.get(f"https://query1.finance.yahoo.com/v7/finance/quote?fields=regularMarketPrice&symbols=USD{config['prices']}=X").json()
+        if not rate_data["quoteResponse"]["result"][0]:
+            raise Exception("Configured display currency invalid, please refer to documentation.")
+        rate = rate_data["quoteResponse"]["result"][0]["regularMarketPrice"]
 
     for quote in data["quoteResponse"]["result"]:
         try:
-            quotes.append([fix_string(quote["symbol"] + ": " + quote["quoteType"], 29), fix_string(quote["regularMarketPrice"], 15), fix_string(quote.get("postMarketPrice", "0.00"), 15), fix_string(quote.get("regularMarketVolume", 0), 15) +
+            quotes.append([fix_string(quote["symbol"] + ": " + quote["quoteType"], 29), fix_string(quote["regularMarketPrice"] * rate, 15), fix_string(quote.get("postMarketPrice", 0.00) * rate, 15), fix_string(quote.get("regularMarketVolume", 0), 15) +
                            "\n", fix_string(quote["shortName"], 29), fix_string(str(quote["regularMarketChangePercent"]) + "%", 15), fix_string(str(quote.get("postMarketChangePercent", "0.00")) + "%", 15), fix_string(quote["marketState"], 15) + "\n"])
         except:
             pass
