@@ -4,10 +4,12 @@ import requests
 import urwid
 import yaml
 
+from scroll import Scrollable, ScrollBar
+
 
 def fetch():
     display = [
-        ("bold text", f"{fix_string('Name (Prices ' + config['prices'] + ')', 29)}Market          Postmarket      Volume         \n")]
+        ("bold text", f"{fix_string('Name (Prices ' + config['prices'] + ')', 28)}Market          Postmarket      Volume         \n")]
     quotes = []
     stocks = ",".join(config['stocks'])
     cryptos = ",".join([crypto + "-USD" for crypto in config['cryptos']])
@@ -29,8 +31,8 @@ def fetch():
 
     for quote in data["quoteResponse"]["result"]:
         try:
-            quotes.append([fix_string(quote["symbol"] + ": " + quote["quoteType"], 29), fix_string(quote["regularMarketPrice"] * rate, 15), fix_string(quote.get("postMarketPrice", 0.00) * rate, 15), fix_string(quote.get("regularMarketVolume", 0), 15) +
-                           "\n", fix_string(quote["shortName"], 29), fix_string(str(quote["regularMarketChangePercent"]) + "%", 15), fix_string(str(quote.get("postMarketChangePercent", "0.00")) + "%", 15), fix_string(quote["marketState"], 15) + "\n"])
+            quotes.append([fix_string(quote["symbol"] + ": " + quote["quoteType"], 28), fix_string(quote["regularMarketPrice"] * rate, 15), fix_string(quote.get("postMarketPrice", 0.00) * rate, 15), fix_string(quote.get("regularMarketVolume", 0), 15) +
+                           "\n", fix_string(quote["shortName"], 28), fix_string(str(quote["regularMarketChangePercent"]) + "%", 15), fix_string(str(quote.get("postMarketChangePercent", "0.00")) + "%", 15), fix_string(quote["marketState"], 15) + "\n"])
         except:
             pass
 
@@ -118,14 +120,15 @@ else:
 
 header = f"stonktrack: {len(config['stocks'])} {'stocks' if len(config['stocks']) != 1 else 'stock'}, {len(config['cryptos'])} {'cryptocurrencies' if len(config['cryptos']) != 1 else 'cryptocurrency'}, {len(config['forexes'])} {'forexes' if len(config['forexes']) != 1 else 'forex'}, and {len(config['others'])} other {'investments' if len(config['others']) != 1 else 'investment'}"
 header = urwid.Text([("title", header)])
-body = urwid.LineBox(urwid.Filler(urwid.Text([("text", "Loading...")]), valign="top"))
+body = urwid.LineBox(ScrollBar(Scrollable(
+    urwid.Text([("text", "Loading...")]))))
 footer = urwid.Text([("key", "C"), ("text", " Refresh Config  "), ("key", "R"), ("text", " Refresh Prices  "),
                      ("key", "Q"), ("text", " Quit Program  "), ("key", "Never"), ("text", " Last Updated")])
 
 layout = urwid.Frame(header=header, body=body,
                      footer=footer, focus_part="footer")
-loop = urwid.MainLoop(
-    layout, palette, unhandled_input=keystroke, handle_mouse=False)
+layout.set_focus("body")
+loop = urwid.MainLoop(layout, palette, unhandled_input=keystroke)
 last_update = ""
 last_query = ""
 session = requests.Session()
