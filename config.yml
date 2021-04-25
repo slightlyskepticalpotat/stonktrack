@@ -1,6 +1,6 @@
-# Sample configuration file, see CONFIG.md for explanation.
 refresh: 10
 theme: default
+colour: true
 sort: change
 reverse: true
 prices: CAD
