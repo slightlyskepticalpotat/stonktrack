@@ -128,7 +128,7 @@ footer = urwid.Text([("key", "C"), ("text", " Refresh Config  "), ("key", "R"), 
 layout = urwid.Frame(header=header, body=body,
                      footer=footer, focus_part="footer")
 layout.set_focus("body")
-loop = urwid.MainLoop(layout, palette, unhandled_input=keystroke)
+loop = urwid.MainLoop(layout, palette, unhandled_input=keystroke, handle_mouse=False)
 last_update = ""
 last_query = ""
 session = requests.Session()

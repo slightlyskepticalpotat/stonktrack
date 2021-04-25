@@ -2,15 +2,20 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
+#
 # This program is distributed in the hope that it will be useful
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details
-
+#
 # http://www.gnu.org/licenses/gpl-3.0.txt
-
+#
 # Modified from https://github.com/rndusr/stig/blob/master/stig/tui/scroll.py by rndusr
-# Changes: removed mouse_event functions because the scrollbar jumps around
+#
+# Changes
+# Removed mouse_event functions because the scrollbar jumps around
+# Removed size parameter in keypress() functions to make this work with handle_mouse=False
+# However, the mouse still works without being captured on some terminals
 
 import urwid
 from urwid.widget import BOX, FIXED, FLOW
@@ -127,7 +132,7 @@ class Scrollable(urwid.WidgetDecoration):
 
         return canv
 
-    def keypress(self, size, key):
+    def keypress(self, key):
         # Maybe offer key to original widget
         if self._forward_keypress:
             ow = self._original_widget
@@ -392,4 +397,4 @@ class ScrollBar(urwid.WidgetDecoration):
         raise ValueError('Not compatible to be wrapped by ScrollBar: %r' % w)
 
     def keypress(self, size, key):
-        return self._original_widget.keypress(self._original_widget_size, key)
+        return self._original_widget.keypress(key)
