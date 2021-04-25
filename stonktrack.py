@@ -98,7 +98,7 @@ def refresh(_loop, _data):
     last_query = fetch()
     last_update = time.strftime("%H:%M:%S", time.localtime())
     body.base_widget.set_text(last_query)
-    footer.base_widget.set_text([("key", "C"), ("text", " Refresh Config  "), ("key", "R"), ("text", " Refresh Prices  "), (
+    footer.base_widget.set_text([("key", "C"), ("text", " Reload Config  "), ("key", "R"), ("text", " Refresh Prices  "), (
         "key", "Q"), ("text", " Quit Program   "), ("key", last_update), ("text", " Last Updated")])
     _loop.set_alarm_in(config["refresh"], refresh)
     _loop.draw_screen()
@@ -118,17 +118,27 @@ elif config["theme"] == "default":
 else:
     raise Exception("Configured theme invalid, please refer to documentation.")
 
+if config["colour"] == True:
+    pass
+elif config["colour"] == False:
+    palette[0] = (palette[0][0], palette[2][1], palette[2][2])
+    palette[1] = (palette[1][0], palette[2][1], palette[2][2])
+else:
+    raise Exception(
+        "Configured colour invalid, please refer to documentation.")
+
 header = f"stonktrack: {len(config['stocks'])} {'stocks' if len(config['stocks']) != 1 else 'stock'}, {len(config['cryptos'])} {'cryptocurrencies' if len(config['cryptos']) != 1 else 'cryptocurrency'}, {len(config['forexes'])} {'forexes' if len(config['forexes']) != 1 else 'forex'}, and {len(config['others'])} other {'investments' if len(config['others']) != 1 else 'investment'}"
 header = urwid.Text([("title", header)])
 body = urwid.LineBox(ScrollBar(Scrollable(
     urwid.Text([("text", "Loading...")]))))
-footer = urwid.Text([("key", "C"), ("text", " Refresh Config  "), ("key", "R"), ("text", " Refresh Prices  "),
+footer = urwid.Text([("key", "C"), ("text", " Reload Config  "), ("key", "R"), ("text", " Refresh Prices  "),
                      ("key", "Q"), ("text", " Quit Program  "), ("key", "Never"), ("text", " Last Updated")])
 
 layout = urwid.Frame(header=header, body=body,
                      footer=footer, focus_part="footer")
 layout.set_focus("body")
-loop = urwid.MainLoop(layout, palette, unhandled_input=keystroke, handle_mouse=False)
+loop = urwid.MainLoop(
+    layout, palette, unhandled_input=keystroke, handle_mouse=False)
 last_update = ""
 last_query = ""
 session = requests.Session()
