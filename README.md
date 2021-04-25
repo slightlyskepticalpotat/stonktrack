@@ -10,14 +10,11 @@ Stonktrack is a terminal utility that can track stocks, cryptocurrencies, forexe
 ### Installing and Running
 This program can be installed in two different ways. You can install it directly with pip (recommended), or clone the repository and run the code yourself. Either way, you will need Python 3.8 or higher to run the code.
 
-Once you have installed the program with pip or cloned the repository, there are two versions of the program to choose from. `stonktrack` is the official supported version with colour and no scrolling, and `stonktrack-scroll` is the non-supported monochrome version with scrolling. `stonktrack` is recommend.
-
 #### Using Pip
 ```
 $ pip3 install stonktrack
 $ nano config.yml
 $ python3 -m stonktrack
-$ python3 -m stonktrack-scroll
 ```
 
 #### Manually
@@ -27,7 +24,6 @@ $ cd stonktrack
 $ pip3 install -r requirements.txt
 $ nano config.yml
 $ python3 stonktrack.py
-$ python3 stonktrack-scroll.py
 ```
 
 ### Usage
@@ -35,12 +31,7 @@ Stonktrack is configured through a single configuration file named `config.yml`.
 
 ## Screenshots
 ![stonktrack](screenshots/stonktrack.png)
-> Normal stonktrack, with colour but no scrolling
-
----
-
-![stonktrack-scroll](screenshots/stonktrack-scroll.png)
-> Stonktrack-scroll, in monochrome but with scrolling
+> Normal stonktrack, with colour and a scrollbar
 
 ---
 
