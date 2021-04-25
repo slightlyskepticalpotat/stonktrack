@@ -5,10 +5,6 @@
 
 Stonktrack is a terminal utility that can track stocks, cryptocurrencies, forexes, and more. Built with Python and urwid, it's different from other terminal finance trackers in that it can track a variety of assets, fetches  non-delayed real-time data, and does not require an API key. Stocktrack can also automatically convert prices into your local currency.
 
-![stonktrack screenshot](https://i.imgur.com/H4eb6JO.png)
-
-![stonktrack-scroll screenshot](https://i.imgur.com/478Rp3k.png)
-
 ## Getting Started
 
 ### Installing and Running
@@ -36,6 +32,20 @@ $ python3 stonktrack-scroll.py
 
 ### Usage
 Stonktrack is configured through a single configuration file named `config.yml`. Configuration options are explained in [CONFIG.md](CONFIG.md), and a sample configuration file is provided in [config.yml](config.yml).
+
+## Screenshots
+![stonktrack](screenshots/stonktrack.png)
+> Normal stonktrack, with colour but no scrolling
+
+---
+
+![stonktrack-scroll](screenshots/stonktrack-scroll.png)
+> Stonktrack-scroll, in monochrome but with scrolling
+
+---
+
+![stonktrack-phone](screenshots/stonktrack-phone.png)
+> Stonktrack even works on mobile with Termux
 
 ## Contributing
 Bug reports, forks, and pull requests are all welcome. Feel free to open an issue!
