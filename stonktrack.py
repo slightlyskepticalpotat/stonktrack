@@ -118,8 +118,7 @@ else:
 
 header = f"stonktrack: {len(config['stocks'])} {'stocks' if len(config['stocks']) != 1 else 'stock'}, {len(config['cryptos'])} {'cryptocurrencies' if len(config['cryptos']) != 1 else 'cryptocurrency'}, {len(config['forexes'])} {'forexes' if len(config['forexes']) != 1 else 'forex'}, and {len(config['others'])} other {'investments' if len(config['others']) != 1 else 'investment'}"
 header = urwid.Text([("title", header)])
-body = urwid.Filler(urwid.Text([("text", "Loading prices...")]), valign="top")
-body = urwid.LineBox(urwid.Padding(body, align="left"))
+body = urwid.LineBox(urwid.Filler(urwid.Text([("text", "Loading...")]), valign="top"))
 footer = urwid.Text([("key", "C"), ("text", " Refresh Config  "), ("key", "R"), ("text", " Refresh Prices  "),
                      ("key", "Q"), ("text", " Quit Program  "), ("key", "Never"), ("text", " Last Updated")])
 
