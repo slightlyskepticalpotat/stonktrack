@@ -99,7 +99,7 @@ def refresh(_loop, _data):
     last_update = time.strftime("%H:%M:%S", time.localtime())
     body.base_widget.set_text(last_query)
     footer.base_widget.set_text([("key", "C"), ("text", " Reload Config  "), ("key", "R"), ("text", " Refresh Prices  "), (
-        "key", "Q"), ("text", " Quit Program   "), ("key", last_update), ("text", " Last Updated")])
+        "key", "Q"), ("text", " Quit Program  "), ("key", last_update), ("text", " Last Refresh")])
     _loop.set_alarm_in(config["refresh"], refresh)
     _loop.draw_screen()
 
@@ -132,7 +132,7 @@ header = urwid.Text([("title", header)])
 body = urwid.LineBox(ScrollBar(Scrollable(
     urwid.Text([("text", "Loading...")]))))
 footer = urwid.Text([("key", "C"), ("text", " Reload Config  "), ("key", "R"), ("text", " Refresh Prices  "),
-                     ("key", "Q"), ("text", " Quit Program  "), ("key", "Never"), ("text", " Last Updated")])
+                     ("key", "Q"), ("text", " Quit Program  "), ("key", "Never"), ("text", " Last Refresh")])
 
 layout = urwid.Frame(header=header, body=body,
                      footer=footer, focus_part="footer")
