@@ -31,8 +31,8 @@ def fetch():
 
     for quote in data["quoteResponse"]["result"]:
         try:
-            quotes.append([fix_string(quote["symbol"] + ": " + quote["quoteType"], 28), fix_string(quote["regularMarketPrice"] * rate, 15), fix_string(quote.get("postMarketPrice", 0.00) * rate, 15), fix_string(quote.get("regularMarketVolume", 0), 15) +
-                           "\n", fix_string(quote["shortName"], 28), fix_string(str(quote["regularMarketChangePercent"]) + "%", 15), fix_string(str(quote.get("postMarketChangePercent", "0.00")) + "%", 15), fix_string(quote["marketState"], 15) + "\n"])
+            quotes.append([fix_string(quote["symbol"] + ": " + quote["quoteType"], 28), fix_string(format(quote["regularMarketPrice"] * rate, ".4f"), 15), fix_string(format(quote.get("postMarketPrice", 0.00) * rate, ".4f"), 15), fix_string(quote.get("regularMarketVolume", 0), 15) +
+                           "\n", fix_string(quote["shortName"], 28), fix_string(format(quote["regularMarketChangePercent"], ".2f") + "%", 15), fix_string(format(quote.get("postMarketChangePercent", 0.00), ".2f") + "%", 15), fix_string(quote["marketState"], 15) + "\n"])
         except:
             pass
 
