@@ -1,5 +1,6 @@
 # stonktrack
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/slightlyskepticalpotat/stonktrack?style=flat-square)
+![PyPI](https://img.shields.io/pypi/v/stonktrack?style=flat-square)
 ![GitHub](https://img.shields.io/github/license/slightlyskepticalpotat/stonktrack?style=flat-square)
 ![Python Version](https://img.shields.io/badge/python-%3E%3D%203.6-blue?style=flat-square)
 
