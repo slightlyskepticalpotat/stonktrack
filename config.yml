@@ -11,6 +11,7 @@ stocks:
 cryptos:
     - BTC # crypto
     - ETH # crypto
+    - DOGE # crypto
 forexes:
     - CADUSD # forex
     - USDGBP # forex

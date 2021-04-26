@@ -40,7 +40,7 @@ Stonktrack is configured through a single configuration file named `config.yml`.
 
 ---
 
-![stonktrack-monochrome](screenshots/stonktrack-monochrome.png)
+![stonktrack-bw](screenshots/stonktrack-bw.png)
 > Monochrome mode isn't very colourful
 
 ## Contributing
