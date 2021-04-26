@@ -9,7 +9,8 @@ from scroll import Scrollable, ScrollBar
 
 def fetch():
     display = [
-        ("bold text", f"{fix_string('Name (Prices ' + config['prices'] + ')', 28)}Market          Postmarket      Volume         \n")]
+        ("bold text",
+         f"{fix_string('Name (Prices ' + config['prices'] + ')', 28)}Market          Postmarket      Volume         \n")]
     quotes = []
     stocks = ",".join(config['stocks'])
     cryptos = ",".join([crypto + "-USD" for crypto in config['cryptos']])
@@ -31,8 +32,28 @@ def fetch():
 
     for quote in data["quoteResponse"]["result"]:
         try:
-            quotes.append([fix_string(quote["symbol"] + ": " + quote["quoteType"], 28), fix_string(format(quote["regularMarketPrice"] * rate, ".4f"), 15), fix_string(format(quote.get("postMarketPrice", 0.00) * rate, ".4f"), 15), fix_string(quote.get("regularMarketVolume", 0), 15) +
-                           "\n", fix_string(quote["shortName"], 28), fix_string(format(quote["regularMarketChangePercent"], ".2f") + "%", 15), fix_string(format(quote.get("postMarketChangePercent", 0.00), ".2f") + "%", 15), fix_string(quote["marketState"], 15) + "\n"])
+            quotes.append(
+                [fix_string(quote["symbol"] + ": " + quote["quoteType"],
+                            28),
+                 fix_string(
+                     format(quote["regularMarketPrice"] * rate, ".4f"),
+                     15),
+                 fix_string(
+                     format(
+                         quote.get("postMarketPrice", 0.00) * rate, ".4f"),
+                     15),
+                 fix_string(quote.get("regularMarketVolume", 0),
+                            15) + "\n", fix_string(quote["shortName"],
+                                                   28),
+                 fix_string(
+                     format(quote["regularMarketChangePercent"],
+                            ".2f") + "%", 15),
+                 fix_string(
+                     format(
+                         quote.get("postMarketChangePercent", 0.00),
+                         ".2f") + "%", 15),
+                 fix_string(quote["marketState"],
+                            15) + "\n"])
         except:
             pass
 
@@ -98,8 +119,17 @@ def refresh(_loop, _data):
     last_query = fetch()
     last_update = time.strftime("%H:%M:%S", time.localtime())
     body.base_widget.set_text(last_query)
-    footer.base_widget.set_text([("key", "R"), ("text", " Refresh  "), ("key", "C"), (
-        "text", " Reload Config  "), ("key", "Q"), ("text", " Quit  "), ("key", sort_name()), ("text", " Sort  "), ("key", last_update), ("text", " Refreshed")])
+    footer.base_widget.set_text(
+        [("key", "R"),
+         ("text", " Refresh  "),
+         ("key", "C"),
+         ("text", " Reload Config  "),
+         ("key", "Q"),
+         ("text", " Quit  "),
+         ("key", sort_name()),
+         ("text", " Sort  "),
+         ("key", last_update),
+         ("text", " Updated")])
     _loop.set_alarm_in(config["refresh"], refresh)
     _loop.draw_screen()
 
@@ -114,14 +144,29 @@ def sort_name():
 load_config()
 
 if config["theme"] == "light":
-    palette = [("positive", "light green", "white"), ("negative", "light red", "white"), ("text", "black", "white"),
-               ("bold text", "black,bold", "white"), ("key", "black,standout,bold", "white"), ("title", "black,underline", "white")]
+    palette = [
+        ("positive", "light green", "white"),
+        ("negative", "light red", "white"),
+        ("text", "black", "white"),
+        ("bold text", "black,bold", "white"),
+        ("key", "black,standout,bold", "white"),
+        ("title", "black,underline", "white")]
 elif config["theme"] == "dark":
-    palette = [("positive", "light green", "black"), ("negative", "light red", "black"), ("text", "white", "black"),
-               ("bold text", "white,bold", "black"), ("key", "white,standout,bold", "black"), ("title", "white,underline", "black")]
+    palette = [
+        ("positive", "light green", "black"),
+        ("negative", "light red", "black"),
+        ("text", "white", "black"),
+        ("bold text", "white,bold", "black"),
+        ("key", "white,standout,bold", "black"),
+        ("title", "white,underline", "black")]
 elif config["theme"] == "default":
-    palette = [("positive", "light green", ""), ("negative", "light red", ""), ("text", "", ""),
-               ("bold text", "bold", ""), ("key", "standout,bold", ""), ("title", "underline", "")]
+    palette = [
+        ("positive", "light green", ""),
+        ("negative", "light red", ""),
+        ("text", "", ""),
+        ("bold text", "bold", ""),
+        ("key", "standout,bold", ""),
+        ("title", "underline", "")]
 else:
     raise Exception("Configured theme invalid, please refer to documentation.")
 
@@ -138,12 +183,20 @@ header = f"stonktrack: tracking {len(config['stocks'])} {'stocks' if len(config[
 header = urwid.Text([("title", header)])
 body = urwid.LineBox(ScrollBar(Scrollable(
     urwid.Text([("text", "Loading...")]))))
-footer = urwid.Text([("key", "R"), ("text", " Refresh  "), ("key", "C"), ("text", " Reload Config  "),
-                     ("key", "Q"), ("text", " Quit  "), ("key", sort_name()), ("text", " Sort  "), ("key", "Never"), ("text", " Refreshed")])
+footer = urwid.Text(
+    [("key", "R"),
+     ("text", " Refresh  "),
+     ("key", "C"),
+     ("text", " Reload Config  "),
+     ("key", "Q"),
+     ("text", " Quit  "),
+     ("key", sort_name()),
+     ("text", " Sort  "),
+     ("key", "Never"),
+     ("text", " Updated")])
 
 layout = urwid.Frame(header=header, body=body,
-                     footer=footer, focus_part="footer")
-layout.set_focus("body")
+                     footer=footer, focus_part="body")
 loop = urwid.MainLoop(
     layout, palette, unhandled_input=keystroke, handle_mouse=False)
 last_update = ""
