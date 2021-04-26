@@ -2,14 +2,11 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details
-#
 # http://www.gnu.org/licenses/gpl-3.0.txt
-#
 # Modified from https://github.com/rndusr/stig/blob/master/stig/tui/scroll.py by rndusr
 #
 # Changes
@@ -21,20 +18,21 @@ import urwid
 from urwid.widget import BOX, FIXED, FLOW
 
 # Scroll actions
-SCROLL_LINE_UP        = 'line up'
-SCROLL_LINE_DOWN      = 'line down'
-SCROLL_PAGE_UP        = 'page up'
-SCROLL_PAGE_DOWN      = 'page down'
-SCROLL_TO_TOP         = 'to top'
-SCROLL_TO_END         = 'to end'
+SCROLL_LINE_UP = 'line up'
+SCROLL_LINE_DOWN = 'line down'
+SCROLL_PAGE_UP = 'page up'
+SCROLL_PAGE_DOWN = 'page down'
+SCROLL_TO_TOP = 'to top'
+SCROLL_TO_END = 'to end'
 
 # Scrollbar positions
-SCROLLBAR_LEFT  = 'left'
+SCROLLBAR_LEFT = 'left'
 SCROLLBAR_RIGHT = 'right'
+
 
 class Scrollable(urwid.WidgetDecoration):
     def sizing(self):
-        return frozenset([BOX,])
+        return frozenset([BOX, ])
 
     def selectable(self):
         return True
@@ -262,7 +260,8 @@ class Scrollable(urwid.WidgetDecoration):
             elif FLOW in sizing:
                 self._rows_max_cached = ow.rows(ow_size, focus)
             else:
-                raise RuntimeError('Not a flow/box widget: %r' % self._original_widget)
+                raise RuntimeError('Not a flow/box widget: %r' %
+                                   self._original_widget)
         return self._rows_max_cached
 
 
@@ -375,7 +374,8 @@ class ScrollBar(urwid.WidgetDecoration):
     @scrollbar_side.setter
     def scrollbar_side(self, side):
         if side not in (SCROLLBAR_LEFT, SCROLLBAR_RIGHT):
-            raise ValueError('scrollbar_side must be "left" or "right", not %r' % side)
+            raise ValueError(
+                'scrollbar_side must be "left" or "right", not %r' % side)
         self._scrollbar_side = side
         self._invalidate()
 
