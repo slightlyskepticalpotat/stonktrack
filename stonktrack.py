@@ -33,8 +33,7 @@ def fetch():
     for quote in data["quoteResponse"]["result"]:
         try:
             quotes.append(
-                [fix_string(quote["symbol"] + ": " + quote["quoteType"],
-                            28),
+                [quote["symbol"] + ": " + quote["quoteType"],
                  fix_string(
                      format(quote["regularMarketPrice"] * rate, ".4f"),
                      15),
@@ -53,7 +52,7 @@ def fetch():
                          quote.get("postMarketChangePercent", 0.00),
                          ".2f") + "%", 15),
                  fix_string(quote["marketState"],
-                            15) + "\n"])
+                            15) + "\n"]) # fix 0th later
         except:
             pass
 
@@ -68,6 +67,9 @@ def fetch():
         quotes.sort(key=lambda x: x[7], reverse=config["reverse"])
     elif config["sort"] == "value":
         quotes.sort(key=lambda x: x[1], reverse=config["reverse"])
+
+    for i in range(len(quotes)):
+        quotes[i][0] = fix_string(str(i + 1) + ". " + quotes[i][0], 28)
 
     for line in quotes:
         for value in line:
