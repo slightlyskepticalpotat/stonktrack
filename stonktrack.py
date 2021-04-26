@@ -52,7 +52,7 @@ def fetch():
                          quote.get("postMarketChangePercent", 0.00),
                          ".2f") + "%", 15),
                  fix_string(quote["marketState"],
-                            15) + "\n"]) # fix 0th later
+                            15) + "\n"])  # fix 0th later
         except:
             pass
 
@@ -72,8 +72,9 @@ def fetch():
         quotes[i][0] = fix_string(str(i + 1) + ". " + quotes[i][0], 28)
 
     tracked = query.count(",") + 1 - len(data["quoteResponse"]["result"])
-    if tracked: # tracked investments
-        quotes.append(f"\nData unavailable for {tracked} {'investments' if tracked != 1 else 'investment'}.")
+    if tracked:  # tracked investments
+        quotes.append(
+            f"\nData unavailable for {tracked} {'investments' if tracked != 1 else 'investment'}.")
 
     for line in quotes:
         for value in line:
