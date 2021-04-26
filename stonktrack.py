@@ -71,6 +71,10 @@ def fetch():
     for i in range(len(quotes)):
         quotes[i][0] = fix_string(str(i + 1) + ". " + quotes[i][0], 28)
 
+    tracked = query.count(",") + 1 - len(data["quoteResponse"]["result"])
+    if tracked: # tracked investments
+        quotes.append(f"\nData unavailable for {tracked} {'investments' if tracked != 1 else 'investment'}.")
+
     for line in quotes:
         for value in line:
             if "%" in value and "-" in value:
