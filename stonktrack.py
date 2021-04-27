@@ -12,11 +12,6 @@ def fetch():
         ("bold text",
          f"{fix_string('Name (Prices ' + config['prices'] + ')', 28)}Market          Postmarket      Volume         \n")]
     quotes = []
-    stocks = ",".join(config['stocks'])
-    cryptos = ",".join([crypto + "-USD" for crypto in config['cryptos']])
-    forexes = ",".join([forex + "=X" for forex in config['forexes']])
-    others = ",".join(config['others'])
-    query = ",".join([stocks, cryptos, forexes, others]).strip(",")
     data = session.get(
         f"https://query1.finance.yahoo.com/v7/finance/quote?fields=symbol,quoteType,regularMarketPrice,postMarketPrice,regularMarketVolume,shortName,regularMarketChangePercent,postMarketChangePercent,marketState&symbols={query}").json()
 
@@ -109,8 +104,8 @@ def keystroke(key):
 
 
 def load_config():
+    global config, query
     with open("config.yml", "r") as conf:
-        global config
         config = yaml.full_load(conf)
         if not config["stocks"]:
             config["stocks"] = []
@@ -120,6 +115,11 @@ def load_config():
             config["forexes"] = []
         if not config["others"]:
             config["others"] = []
+    stocks = ",".join(config['stocks'])
+    cryptos = ",".join([crypto + "-USD" for crypto in config['cryptos']])
+    forexes = ",".join([forex + "=X" for forex in config['forexes']])
+    others = ",".join(config['others'])
+    query = ",".join([stocks, cryptos, forexes, others]).strip(",")
 
 
 def refresh(_loop, _data):
@@ -191,9 +191,7 @@ header = f"stonktrack: tracking {len(config['stocks'])} {'stocks' if len(config[
 header = urwid.Pile([urwid.Text([("title", header)]), urwid.Divider("─")])
 body = urwid.Pile(
     [urwid.LineBox(
-        urwid.Text([("text", "Loading...")]),
-        tlcorner="", tline="", trcorner="", blcorner="", bline="",
-        brcorner="")])
+        urwid.Text([("text", "Loading...")]), tline="", bline="")])
 body = ScrollBar(Scrollable(body))
 footer = urwid.Pile([urwid.Divider("─"), urwid.Text(
     [("key", "R"),
