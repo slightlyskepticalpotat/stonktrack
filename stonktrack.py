@@ -14,7 +14,7 @@ def fetch():
     quotes = []
     global data
     data = session.get(
-        f"https://query1.finance.yahoo.com/v7/finance/quote?fields=symbol,quoteType,regularMarketPrice,postMarketPrice,regularMarketVolume,shortName,regularMarketChangePercent,postMarketChangePercent,marketState&symbols={query}").json()["quoteResponse"]["result"]
+        f"https://query1.finance.yahoo.com/v7/finance/quote?fields=symbol,quoteType,regularMarketPrice,postMarketPrice,regularMarketVolume,shortName,longName,regularMarketChangePercent,postMarketChangePercent,marketState&symbols={query}").json()["quoteResponse"]["result"]
 
     if config["prices"] == "USD":
         rate = 1
@@ -96,12 +96,11 @@ def fetch():
 
 def focus_fetch():
     focus = []
-    focus_query = data[focus_index]["symbol"]
-    focus_data = session.get(
-        f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={focus_query}").json()["quoteResponse"]["result"][0]
+    focus_data = data[focus_index]  # use preexisting query for speed
 
     focus.append(
-        ("title", f"{focus_data['shortName']}: {focus_data['symbol']}"))
+        ("title",
+         f"{focus_index + 1}. {focus_data['symbol']}: {focus_data['longName'] if 'longName' in focus_data else focus_data['shortName']} ({focus_data['quoteType']}) (Data from {focus_data['fullExchangeName']})"))
     return focus
 
 
@@ -151,7 +150,8 @@ def refresh(_loop, _data):
     global last_update
     last_update = time.strftime("%H:%M:%S", time.localtime())
     body.base_widget.contents[0][0].base_widget.set_text(fetch())
-    body.base_widget.contents[2][0].base_widget.set_text(focus_fetch())
+    if config["focus"]:
+        body.base_widget.contents[2][0].base_widget.set_text(focus_fetch())
     footer.base_widget.contents[1][0].base_widget.set_text(
         [("key", "R"),
          ("text", " Reload "),
@@ -223,15 +223,20 @@ session = Session()
 
 header = f"stonktrack: tracking {len(config['stocks'])} {'stocks' if len(config['stocks']) != 1 else 'stock'}, {len(config['cryptos'])} {'cryptocurrencies' if len(config['cryptos']) != 1 else 'cryptocurrency'}, {len(config['forexes'])} {'forexes' if len(config['forexes']) != 1 else 'forex'}, and {len(config['others'])} {'others' if len(config['others']) != 1 else 'other'}"
 header = urwid.Pile([urwid.Text([("title", header)]), urwid.Divider("─")])
-body = urwid.Pile(
-    [urwid.LineBox(
-        urwid.Text([("text", "Loading prices...")]),
-        tline="", bline=""),
-     urwid.Divider("─"),
-     urwid.LineBox(
-         urwid.Text([("text", "Loading focus...")]),
-         tline="", bline="")])  # start with first stock, allow users to toggle the focus with left/right arrow keys
-body = ScrollBar(Scrollable(body))
+if config["focus"]:
+    body = urwid.Pile(
+        [urwid.LineBox(
+            urwid.Text([("text", "Loading prices...")]),
+            tline="", bline=""),
+         urwid.Divider("─"),
+         urwid.LineBox(
+             urwid.Text([("text", "Loading focus...")]),
+             tline="", bline="")])
+else:
+    body = urwid.Pile(
+        [urwid.LineBox(
+            urwid.Text([("text", "Loading prices...")]),
+            tline="", bline="")])
 footer = urwid.Pile([urwid.Divider("─"), urwid.Text(
     [("key", "R"),
      ("text", " Reload "),
@@ -248,7 +253,8 @@ footer = urwid.Pile([urwid.Divider("─"), urwid.Text(
      ("text", " Focus "),
      ("key", last_update),
      ("text", " Updated")])])
-layout = urwid.Frame(header=header, body=body,
+
+layout = urwid.Frame(header=header, body=ScrollBar(Scrollable(body)),
                      footer=footer, focus_part="body")
 loop = urwid.MainLoop(
     layout, palette, unhandled_input=keystroke, handle_mouse=False)

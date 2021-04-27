@@ -28,24 +28,21 @@ $ python3 stonktrack.py
 ```
 
 ### Usage
-Stonktrack is configured through a single configuration file named `config.yml`. Configuration options are explained in [CONFIG.md](CONFIG.md), and a sample configuration file is provided in [config.yml](config.yml).
+Stonktrack is configured through a single configuration file named `config.yml`. Configuration options are explained in [CONFIG.md](https://github.com/slightlyskepticalpotat/stonktrack/blob/main/CONFIG.md), and a sample configuration file is provided in [config.yml](https://github.com/slightlyskepticalpotat/stonktrack/blob/main/config.yml).
 
 ## Screenshots
+More screenshots of various options are available in [/screenshots](https://github.com/slightlyskepticalpotat/stonktrack/tree/main/screenshots).
+
 ![stonktrack](screenshots/stonktrack.png)
 > Normal stonktrack, with colour and a scrollbar
 
 ---
 
-![stonktrack-phone](screenshots/stonktrack-phone.png)
-> Stonktrack even works on mobile with Termux
-
----
-
 ![stonktrack-bw](screenshots/stonktrack-bw.png)
-> Monochrome mode isn't very colourful
+> Monochrome mode is less distracting for some
 
 ## Contributing
 Bug reports, forks, and pull requests are all welcome. Feel free to open an issue!
 
 ## Licence
-This project is licensed under the GNU Affero General Public License v3.0. For more information, please refer to [LICENSE.md](LICENSE.md).
+This project is licensed under the GNU Affero General Public License v3.0, and makes use of other open-source libraries. For more information, please refer to our [LICENSE](https://github.com/slightlyskepticalpotat/stonktrack/blob/main/LICENSE).

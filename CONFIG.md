@@ -19,6 +19,8 @@ sort - Key to sort listings by. Can be alpha (alphabetical by name), change (tot
 
 reverse - Whether to reverse the default ascending sort order. True is recommended for most sorting keys.
 
+focus - Whether to show the "focus" tab at the bottom that focuses on a specific investment. True is recommended.
+
 prices - Currency that the prices are displayed in. Most of the ISO 4217 codes should work, but anything other than USD will be converted at market rates.
 
 ### Optional
