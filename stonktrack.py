@@ -95,7 +95,7 @@ def fix_string(string, length):
 
 
 def keystroke(key):
-    if key == "C" or key == "c":
+    if key == "L" or key == "l":
         load_config()
     elif key == "R" or key == "r":
         refresh(loop, None)
@@ -130,8 +130,8 @@ def refresh(_loop, _data):
     footer.base_widget.contents[1][0].base_widget.set_text(
         [("key", "R"),
          ("text", " Refresh  "),
-         ("key", "C"),
-         ("text", " Reload Config  "),
+         ("key", "L"),
+         ("text", " Load Config  "),
          ("key", "Q"),
          ("text", " Quit  "),
          ("key", sort_name()),
@@ -190,14 +190,13 @@ else:
 header = f"stonktrack: tracking {len(config['stocks'])} {'stocks' if len(config['stocks']) != 1 else 'stock'}, {len(config['cryptos'])} {'cryptocurrencies' if len(config['cryptos']) != 1 else 'cryptocurrency'}, {len(config['forexes'])} {'forexes' if len(config['forexes']) != 1 else 'forex'}, and {len(config['others'])} {'others' if len(config['others']) != 1 else 'other'}"
 header = urwid.Pile([urwid.Text([("title", header)]), urwid.Divider("─")])
 body = urwid.Pile(
-    [urwid.LineBox(
-        urwid.Text([("text", "Loading...")]), tline="", bline="")])
+    [urwid.LineBox(urwid.Text([("text", "Loading...")]), tline="", bline="")])
 body = ScrollBar(Scrollable(body))
 footer = urwid.Pile([urwid.Divider("─"), urwid.Text(
     [("key", "R"),
      ("text", " Refresh  "),
-     ("key", "C"),
-     ("text", " Reload Config  "),
+     ("key", "L"),
+     ("text", " Load Config  "),
      ("key", "Q"),
      ("text", " Quit  "),
      ("key", sort_name()),

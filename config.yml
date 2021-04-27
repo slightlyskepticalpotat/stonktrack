@@ -3,7 +3,7 @@ theme: default
 colour: true
 sort: change
 reverse: true
-prices: CAD
+prices: USD
 stocks:
     - MSFT # stock
     - VTV # etf
