@@ -14,19 +14,37 @@ def fetch():
     quotes = []
     global data
     data = session.get(
-        f"https://query1.finance.yahoo.com/v7/finance/quote?fields=symbol,quoteType,regularMarketPrice,postMarketPrice,regularMarketVolume,shortName,regularMarketChangePercent,postMarketChangePercent,marketState&symbols={query}").json()
+        f"https://query1.finance.yahoo.com/v7/finance/quote?fields=symbol,quoteType,regularMarketPrice,postMarketPrice,regularMarketVolume,shortName,regularMarketChangePercent,postMarketChangePercent,marketState&symbols={query}").json()["quoteResponse"]["result"]
 
-    if config['prices'] == "USD":
+    if config["prices"] == "USD":
         rate = 1
     else:
         rate_data = session.get(
-            f"https://query1.finance.yahoo.com/v7/finance/quote?fields=regularMarketPrice&symbols=USD{config['prices']}=X").json()
-        if not rate_data["quoteResponse"]["result"][0]:
+            f"https://query1.finance.yahoo.com/v7/finance/quote?fields=regularMarketPrice&symbols=USD{config['prices']}=X").json()["quoteResponse"]["result"]
+        if not rate_data[0]:
             raise Exception(
                 "Configured display currency invalid, please refer to documentation.")
-        rate = rate_data["quoteResponse"]["result"][0]["regularMarketPrice"]
+        rate = rate_data[0]["regularMarketPrice"]
 
-    for quote in data["quoteResponse"]["result"]:
+    if config["sort"] == "alpha":
+        data.sort(key=lambda x: x["shortName"], reverse=config["reverse"])
+    elif config["sort"] == "change":
+        data.sort(
+            key=lambda x: x["regularMarketChangePercent"] +
+            x.get(
+                "postMarketChangePercent",
+                0.00),
+            reverse=config["reverse"])
+    elif config["sort"] == "symbol":
+        data.sort(key=lambda x: x["symbol"], reverse=config["reverse"])
+    elif config["sort"] == "trading":
+        data.sort(key=lambda x: x["marketState"], reverse=config["reverse"])
+    elif config["sort"] == "value":
+        data.sort(
+            key=lambda x: x["regularMarketPrice"],
+            reverse=config["reverse"])
+
+    for quote in data:
         try:
             quotes.append(
                 [quote["symbol"] + ": " + quote["quoteType"],
@@ -52,23 +70,11 @@ def fetch():
         except BaseException:
             pass
 
-    if config["sort"] == "alpha":
-        quotes.sort(key=lambda x: x[4], reverse=config["reverse"])
-    elif config["sort"] == "change":
-        quotes.sort(key=lambda x: float(x[5].strip().strip(
-            "%")) + float(x[6].strip().strip("%")), reverse=config["reverse"])
-    elif config["sort"] == "symbol":
-        quotes.sort(key=lambda x: x[0], reverse=config["reverse"])
-    elif config["sort"] == "trading":
-        quotes.sort(key=lambda x: x[7], reverse=config["reverse"])
-    elif config["sort"] == "value":
-        quotes.sort(key=lambda x: x[1], reverse=config["reverse"])
-
     for i in range(len(quotes)):
         quotes[i][0] = fix_string(str(i + 1) + ". " + quotes[i][0], 28)
     quotes[-1][-1] = quotes[-1][-1].strip()  # strip last newline
 
-    tracked = query.count(",") + 1 - len(data["quoteResponse"]["result"])
+    tracked = query.count(",") + 1 - len(data)
     if tracked:  # if data is missing
         quotes.append(
             f"\n\nData unavailable for {tracked} {'investments' if tracked != 1 else 'investment'}.")
@@ -88,8 +94,15 @@ def fetch():
     return display
 
 
-def fetch_focus():
-    return str(data["quoteResponse"]["result"][focus_index])
+def focus_fetch():
+    focus = []
+    focus_query = data[focus_index]["symbol"]
+    focus_data = session.get(
+        f"https://query1.finance.yahoo.com/v7/finance/quote?symbols={focus_query}").json()["quoteResponse"]["result"][0]
+
+    focus.append(
+        ("title", f"{focus_data['shortName']}: {focus_data['symbol']}"))
+    return focus
 
 
 def fix_string(string, length):
@@ -104,10 +117,10 @@ def keystroke(key):
     if key == "C" or key == "c":
         load_config()
     elif key == "left":
-        focus_index = (focus_index - 1) % len(data["quoteResponse"]["result"])
+        focus_index = (focus_index - 1) % len(data)
         refresh(loop, None)
     elif key == "right":
-        focus_index = (focus_index + 1) % len(data["quoteResponse"]["result"])
+        focus_index = (focus_index + 1) % len(data)
         refresh(loop, None)
     elif key == "R" or key == "r":
         refresh(loop, None)
@@ -138,7 +151,7 @@ def refresh(_loop, _data):
     global last_update
     last_update = time.strftime("%H:%M:%S", time.localtime())
     body.base_widget.contents[0][0].base_widget.set_text(fetch())
-    body.base_widget.contents[2][0].base_widget.set_text(fetch_focus())
+    body.base_widget.contents[2][0].base_widget.set_text(focus_fetch())
     footer.base_widget.contents[1][0].base_widget.set_text(
         [("key", "R"),
          ("text", " Reload "),
@@ -206,7 +219,6 @@ else:
 
 last_update = "Never"
 focus_index = 0
-focus = ""
 session = Session()
 
 header = f"stonktrack: tracking {len(config['stocks'])} {'stocks' if len(config['stocks']) != 1 else 'stock'}, {len(config['cryptos'])} {'cryptocurrencies' if len(config['cryptos']) != 1 else 'cryptocurrency'}, {len(config['forexes'])} {'forexes' if len(config['forexes']) != 1 else 'forex'}, and {len(config['others'])} {'others' if len(config['others']) != 1 else 'other'}"
