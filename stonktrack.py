@@ -70,11 +70,12 @@ def fetch():
 
     for i in range(len(quotes)):
         quotes[i][0] = fix_string(str(i + 1) + ". " + quotes[i][0], 28)
+    quotes[-1][-1] = quotes[-1][-1].strip()  # strip last newline
 
     tracked = query.count(",") + 1 - len(data["quoteResponse"]["result"])
     if tracked:  # tracked investments
         quotes.append(
-            f"\nData unavailable for {tracked} {'investments' if tracked != 1 else 'investment'}.")
+            f"\n\nData unavailable for {tracked} {'investments' if tracked != 1 else 'investment'}.")
 
     for line in quotes:
         for value in line:
@@ -125,8 +126,8 @@ def refresh(_loop, _data):
     global last_query, last_update
     last_query = fetch()
     last_update = time.strftime("%H:%M:%S", time.localtime())
-    body.base_widget.set_text(last_query)
-    footer.base_widget.set_text(
+    body.base_widget.contents[0][0].base_widget.set_text(last_query)
+    footer.base_widget.contents[1][0].base_widget.set_text(
         [("key", "R"),
          ("text", " Refresh  "),
          ("key", "C"),
@@ -187,10 +188,14 @@ else:
         "Configured colour invalid, please refer to documentation.")
 
 header = f"stonktrack: tracking {len(config['stocks'])} {'stocks' if len(config['stocks']) != 1 else 'stock'}, {len(config['cryptos'])} {'cryptocurrencies' if len(config['cryptos']) != 1 else 'cryptocurrency'}, {len(config['forexes'])} {'forexes' if len(config['forexes']) != 1 else 'forex'}, and {len(config['others'])} {'others' if len(config['others']) != 1 else 'other'}"
-header = urwid.Text([("title", header)])
-body = urwid.LineBox(ScrollBar(Scrollable(
-    urwid.Text([("text", "Loading...")]))))
-footer = urwid.Text(
+header = urwid.Pile([urwid.Text([("title", header)]), urwid.Divider("─")])
+body = urwid.Pile(
+    [urwid.LineBox(
+        urwid.Text([("text", "Loading...")]),
+        tlcorner="", tline="", trcorner="", blcorner="", bline="",
+        brcorner="")])
+body = ScrollBar(Scrollable(body))
+footer = urwid.Pile([urwid.Divider("─"), urwid.Text(
     [("key", "R"),
      ("text", " Refresh  "),
      ("key", "C"),
@@ -200,7 +205,7 @@ footer = urwid.Text(
      ("key", sort_name()),
      ("text", " Sort  "),
      ("key", "Never"),
-     ("text", " Updated")])
+     ("text", " Updated")])])
 
 layout = urwid.Frame(header=header, body=body,
                      footer=footer, focus_part="body")
