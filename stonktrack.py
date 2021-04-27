@@ -1,9 +1,9 @@
 import time
 
-import requests
 import urwid
 import yaml
 
+from requests import Session
 from scroll import Scrollable, ScrollBar
 
 
@@ -12,6 +12,7 @@ def fetch():
         ("bold text",
          f"{fix_string('Name (Prices ' + config['prices'] + ')', 28)}Market          Postmarket      Volume         \n")]
     quotes = []
+    global data
     data = session.get(
         f"https://query1.finance.yahoo.com/v7/finance/quote?fields=symbol,quoteType,regularMarketPrice,postMarketPrice,regularMarketVolume,shortName,regularMarketChangePercent,postMarketChangePercent,marketState&symbols={query}").json()
 
@@ -48,7 +49,7 @@ def fetch():
                          ".2f") + "%", 15),
                  fix_string(quote["marketState"],
                             15) + "\n"])  # fix 0th later
-        except:
+        except BaseException:
             pass
 
     if config["sort"] == "alpha":
@@ -68,7 +69,7 @@ def fetch():
     quotes[-1][-1] = quotes[-1][-1].strip()  # strip last newline
 
     tracked = query.count(",") + 1 - len(data["quoteResponse"]["result"])
-    if tracked:  # tracked investments
+    if tracked:  # if data is missing
         quotes.append(
             f"\n\nData unavailable for {tracked} {'investments' if tracked != 1 else 'investment'}.")
 
@@ -87,6 +88,10 @@ def fetch():
     return display
 
 
+def fetch_focus():
+    return str(data["quoteResponse"]["result"][focus_index])
+
+
 def fix_string(string, length):
     string = str(string)
     string = string[:min(length, len(string) + 1)]
@@ -95,8 +100,15 @@ def fix_string(string, length):
 
 
 def keystroke(key):
-    if key == "L" or key == "l":
+    global focus_index
+    if key == "C" or key == "c":
         load_config()
+    elif key == "left":
+        focus_index = (focus_index - 1) % len(data["quoteResponse"]["result"])
+        refresh(loop, None)
+    elif key == "right":
+        focus_index = (focus_index + 1) % len(data["quoteResponse"]["result"])
+        refresh(loop, None)
     elif key == "R" or key == "r":
         refresh(loop, None)
     elif key == "Q" or key == "q":
@@ -123,19 +135,24 @@ def load_config():
 
 
 def refresh(_loop, _data):
-    global last_query, last_update
-    last_query = fetch()
+    global last_update
     last_update = time.strftime("%H:%M:%S", time.localtime())
-    body.base_widget.contents[0][0].base_widget.set_text(last_query)
+    body.base_widget.contents[0][0].base_widget.set_text(fetch())
+    body.base_widget.contents[2][0].base_widget.set_text(fetch_focus())
     footer.base_widget.contents[1][0].base_widget.set_text(
         [("key", "R"),
-         ("text", " Refresh  "),
-         ("key", "L"),
-         ("text", " Load Config  "),
+         ("text", " Reload "),
+         ("key", "◀ ▶ "),  # displays incorrectly without extra space
+         ("text", " Toggle "),
+         ("key", "C"),
+         ("text", " Config "),
          ("key", "Q"),
-         ("text", " Quit  "),
+         ("text", " Quit "),
+         ("text", "│ "),
          ("key", sort_name()),
-         ("text", " Sort  "),
+         ("text", " Sort "),
+         ("key", str(focus_index + 1)),
+         ("text", " Focus "),
          ("key", last_update),
          ("text", " Updated")])
     _loop.set_alarm_in(config["refresh"], refresh)
@@ -187,30 +204,42 @@ else:
     raise Exception(
         "Configured colour invalid, please refer to documentation.")
 
+last_update = "Never"
+focus_index = 0
+focus = ""
+session = Session()
+
 header = f"stonktrack: tracking {len(config['stocks'])} {'stocks' if len(config['stocks']) != 1 else 'stock'}, {len(config['cryptos'])} {'cryptocurrencies' if len(config['cryptos']) != 1 else 'cryptocurrency'}, {len(config['forexes'])} {'forexes' if len(config['forexes']) != 1 else 'forex'}, and {len(config['others'])} {'others' if len(config['others']) != 1 else 'other'}"
 header = urwid.Pile([urwid.Text([("title", header)]), urwid.Divider("─")])
 body = urwid.Pile(
-    [urwid.LineBox(urwid.Text([("text", "Loading...")]), tline="", bline="")])
+    [urwid.LineBox(
+        urwid.Text([("text", "Loading prices...")]),
+        tline="", bline=""),
+     urwid.Divider("─"),
+     urwid.LineBox(
+         urwid.Text([("text", "Loading focus...")]),
+         tline="", bline="")])  # start with first stock, allow users to toggle the focus with left/right arrow keys
 body = ScrollBar(Scrollable(body))
 footer = urwid.Pile([urwid.Divider("─"), urwid.Text(
     [("key", "R"),
-     ("text", " Refresh  "),
-     ("key", "L"),
-     ("text", " Load Config  "),
+     ("text", " Reload "),
+     ("key", "◀ ▶ "),  # displays incorrectly without extra space
+     ("text", " Toggle "),
+     ("key", "C"),
+     ("text", " Config "),
      ("key", "Q"),
-     ("text", " Quit  "),
+     ("text", " Quit "),
+     ("text", "│ "),
      ("key", sort_name()),
-     ("text", " Sort  "),
-     ("key", "Never"),
+     ("text", " Sort "),
+     ("key", str(focus_index + 1)),
+     ("text", " Focus "),
+     ("key", last_update),
      ("text", " Updated")])])
-
 layout = urwid.Frame(header=header, body=body,
                      footer=footer, focus_part="body")
 loop = urwid.MainLoop(
     layout, palette, unhandled_input=keystroke, handle_mouse=False)
-last_update = ""
-last_query = ""
-session = requests.Session()
 
 if __name__ == "__main__":
     loop.set_alarm_in(0, refresh)
