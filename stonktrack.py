@@ -8,13 +8,13 @@ from scroll import Scrollable, ScrollBar
 
 
 def fetch():
+    global data, rate
     display = [
         ("bold text",
-         f"{fix_string('Name (Prices ' + config['prices'] + ')', 28)}Market          Postmarket      Volume         \n")]
+         f"{fix_string('Name (' + config['prices'] + ')', 28)}Market          Postmarket      Volume         \n")]
     quotes = []
-    global data
     data = session.get(
-        f"https://query1.finance.yahoo.com/v7/finance/quote?fields=symbol,quoteType,regularMarketPrice,postMarketPrice,regularMarketVolume,shortName,longName,regularMarketChangePercent,postMarketChangePercent,marketState&symbols={query}").json()["quoteResponse"]["result"]
+        f"https://query1.finance.yahoo.com/v7/finance/quote?fields=fiftyTwoWeekHigh,fiftyTwoWeekLow,longName,marketCap,marketState,postMarketChangePercent,postMarketPrice,quoteType,regularMarketDayHigh,regularMarketDayLow,regularMarketChange,regularMarketChangePercent,regularMarketOpen,regularMarketPreviousClose,regularMarketPrice,regularMarketVolume,shortName,symbol&symbols={query}").json()["quoteResponse"]["result"]
 
     if config["prices"] == "USD":
         rate = 1
@@ -29,12 +29,8 @@ def fetch():
     if config["sort"] == "alpha":
         data.sort(key=lambda x: x["shortName"], reverse=config["reverse"])
     elif config["sort"] == "change":
-        data.sort(
-            key=lambda x: x["regularMarketChangePercent"] +
-            x.get(
-                "postMarketChangePercent",
-                0.00),
-            reverse=config["reverse"])
+        data.sort(key=lambda x: x["regularMarketChangePercent"] + x.get(
+            "postMarketChangePercent", 0.00), reverse=config["reverse"])
     elif config["sort"] == "symbol":
         data.sort(key=lambda x: x["symbol"], reverse=config["reverse"])
     elif config["sort"] == "trading":
@@ -99,8 +95,54 @@ def focus_fetch():
     focus_data = data[focus_index]  # use preexisting query for speed
 
     focus.append(
-        ("title",
-         f"{focus_index + 1}. {focus_data['symbol']}: {focus_data['longName'] if 'longName' in focus_data else focus_data['shortName']} ({focus_data['quoteType']}) (Data from {focus_data['fullExchangeName']})"))
+        ("bold text",
+         f"{focus_index + 1}. {focus_data['symbol']}: {focus_data['longName'] if 'longName' in focus_data else focus_data['shortName']} ({focus_data['quoteType']}) (Data from {focus_data['fullExchangeName']}) ({config['prices']})\n"))
+    colour = 'negative' if focus_data["regularMarketChangePercent"] < 0 else 'positive'
+    focus.extend(
+        [("bold text", "Price "),
+         ("text", format(focus_data["regularMarketPrice"] * rate, ".4f") + " "),
+         (colour, format(focus_data["regularMarketChange"],
+                         ".4f")),
+         ("text", " ("),
+         (colour, format(focus_data["regularMarketChangePercent"],
+                         ".2f") + "%"),
+         ("text", ")  "),
+         ("bold text", "Last Close "),
+         ("text", format(focus_data["regularMarketPreviousClose"],
+                         ".4f")),
+         ("text", "  "),
+         ("bold text", "Open "),
+         ("text", format(focus_data["regularMarketOpen"],
+                         ".4f") + "\n")])
+    focus.extend(
+        [("bold text", "1d High "),
+         ("text", format(focus_data["regularMarketDayHigh"] * rate, ".4f")),
+         ("bold text", "  1d Low "),
+         ("text", format(focus_data["regularMarketDayLow"] * rate, ".4f")),
+         ("bold text", "  1y High "),
+         ("text", format(focus_data["fiftyTwoWeekHigh"] * rate, ".4f")),
+         ("bold text", "  1y Low "),
+         ("text", format(focus_data["fiftyTwoWeekLow"] * rate, ".4f") + "\n")])
+    focus.extend(
+        [("bold text", "1d Range "),
+         ("text",
+          format(
+              abs(
+                  (focus_data["regularMarketDayHigh"] -
+                   focus_data["regularMarketDayLow"]) * rate),
+              ".4f")),
+         ("bold text", "  1y Range "),
+         ("text",
+          format(
+              abs(
+                  (focus_data["fiftyTwoWeekHigh"] -
+                   focus_data["fiftyTwoWeekLow"]) * rate),
+              ".4f")),
+         ("bold text", "  Vol "),
+         ("text", f"{focus_data['regularMarketVolume']}"),
+         ("bold text", "  Market "),
+         ("text",
+          f"{focus_data['marketCap'] if 'marketCap' in focus_data else 0}")])
     return focus
 
 
