@@ -31,15 +31,25 @@ $ python3 stonktrack.py
 Stonktrack is configured through a single configuration file named `config.yml`. Configuration options are explained in [CONFIG.md](https://github.com/slightlyskepticalpotat/stonktrack/blob/main/CONFIG.md), and a sample configuration file is provided in [config.yml](https://github.com/slightlyskepticalpotat/stonktrack/blob/main/config.yml).
 
 ## Screenshots
-More screenshots of various options are available in [/screenshots](https://github.com/slightlyskepticalpotat/stonktrack/tree/main/screenshots).
+More screenshots of various options are available in [/screenshots](https://github.com/slightlyskepticalpotat/stonktrack/blob/main/screenshots).
 
-![stonktrack](screenshots/stonktrack.png)
+![stonktrack](https://github.com/slightlyskepticalpotat/stonktrack/blob/main/screenshots/stonktrack.png)
 > Normal stonktrack, with colour and a scrollbar
 
 ---
 
-![stonktrack-bw](screenshots/stonktrack-bw.png)
+![stonktrack-bw](https://github.com/slightlyskepticalpotat/stonktrack/blob/main/screenshots/stonktrack-bw.png)
 > Monochrome mode is less distracting for some
+
+---
+
+![stonktrack-focus](https://github.com/slightlyskepticalpotat/stonktrack/blob/main/screenshots/stonktrack-focus.png)
+> The focus tab displays in-depth stats
+
+---
+
+![stonktrack-phone](https://github.com/slightlyskepticalpotat/stonktrack/blob/main/screenshots/stonktrack-phone.png)
+> Stonktrack works on mobile (Android + Termux)
 
 ## Contributing
 Bug reports, forks, and pull requests are all welcome. Feel free to open an issue!
